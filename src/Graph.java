@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class Graph {
     private HashMap<Integer, Vertex> vertices;
@@ -36,6 +38,57 @@ public class Graph {
     public void removeEdge(Edge edge) {
         edge.getA().getEdges().remove(edge);
         edge.getB().getEdges().remove(edge);
+    }
+
+    public int dijkstra(Vertex start, Vertex end) {
+        HashSet<Vertex> settledVertices = new HashSet<>();
+        HashSet<Edge> settledEdges = new HashSet<>();
+
+
+        int[] distance = new int[vertices.size()];
+        for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
+            Vertex vertex = entry.getValue();
+            distance[vertex.getKey()] = Integer.MAX_VALUE;
+        }
+        distance[start.getKey()] = 0;
+
+        while (settledVertices.size() < vertices.size()) {
+            Vertex lowestVertex = null;
+            int lowestDistance = Integer.MAX_VALUE;
+            for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
+                Vertex vertex = entry.getValue();
+                if (distance[vertex.getKey()] < lowestDistance && !settledVertices.contains(vertex)) {
+                    lowestVertex = vertex;
+                }
+            }
+
+            if (lowestVertex != null) {
+                Edge lowestEdge;
+                do {
+                    lowestEdge = null;
+                    int lowestWeight = Integer.MAX_VALUE;
+                    for (Edge edge : lowestVertex.getEdges()) {
+                        if (edge.getWeight() < lowestWeight && !settledEdges.contains(edge)) {
+                            lowestEdge = edge;
+                        }
+                    }
+
+                    if (lowestEdge != null) {
+                        Vertex vertex = lowestEdge.getA() == lowestVertex ? lowestEdge.getB() : lowestEdge.getA();
+                        int newDistance = distance[lowestVertex.getKey()] + lowestEdge.getWeight();
+                        if (distance[vertex.getKey()] > newDistance) {
+                            distance[vertex.getKey()] = newDistance;
+                        }
+                    }
+
+                    settledEdges.add(lowestEdge);
+                } while (lowestEdge != null);
+
+                settledVertices.add(lowestVertex);
+            }
+        }
+
+        return distance[end.getKey()];
     }
 
     public void printGraph(){
