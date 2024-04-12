@@ -59,6 +59,7 @@ public class Graph {
                 Vertex vertex = entry.getValue();
                 if (distance[vertex.getKey()] < lowestDistance && !settledVertices.contains(vertex)) {
                     lowestVertex = vertex;
+                    lowestDistance = distance[vertex.getKey()];
                 }
             }
 
@@ -70,6 +71,7 @@ public class Graph {
                     for (Edge edge : lowestVertex.getEdges()) {
                         if (edge.getWeight() < lowestWeight && !settledEdges.contains(edge)) {
                             lowestEdge = edge;
+                            lowestWeight = edge.getWeight();
                         }
                     }
 
