@@ -42,21 +42,22 @@ public class Graph {
         HashSet<Vertex> settledVertices = new HashSet<>();
         HashSet<Edge> settledEdges = new HashSet<>();
 
-        int[] distance = new int[vertices.size()];
+        HashMap<Integer, Integer> distance = new HashMap<>();
+
         for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
             Vertex vertex = entry.getValue();
-            distance[vertex.getKey()] = Integer.MAX_VALUE;
+            distance.put(vertex.getKey(), Integer.MAX_VALUE);
         }
-        distance[start.getKey()] = 0;
+        distance.put(start.getKey(), 0);
 
         while (settledVertices.size() < vertices.size()) {
             Vertex lowestVertex = null;
             int lowestDistance = Integer.MAX_VALUE;
             for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
                 Vertex vertex = entry.getValue();
-                if (distance[vertex.getKey()] <= lowestDistance && !settledVertices.contains(vertex)) {
+                if (distance.get(vertex.getKey()) <= lowestDistance && !settledVertices.contains(vertex)) {
                     lowestVertex = vertex;
-                    lowestDistance = distance[vertex.getKey()];
+                    lowestDistance = distance.get(vertex.getKey());
                 }
             }
 
@@ -72,11 +73,11 @@ public class Graph {
                         }
                     }
 
-                    if (lowestEdge != null) {
+                    if (lowestEdge != null && distance.get(lowestVertex.getKey()) != Integer.MAX_VALUE) {
                         Vertex vertex = lowestEdge.getA() == lowestVertex ? lowestEdge.getB() : lowestEdge.getA();
-                        int newDistance = distance[lowestVertex.getKey()] + lowestEdge.getWeight();
-                        if (distance[vertex.getKey()] > newDistance) {
-                            distance[vertex.getKey()] = newDistance;
+                        int newDistance = distance.get(lowestVertex.getKey()) + lowestEdge.getWeight();
+                        if (distance.get(vertex.getKey()) > newDistance) {
+                            distance.put(vertex.getKey(), newDistance);
                         }
                     }
 
@@ -87,7 +88,7 @@ public class Graph {
             }
         }
 
-        return distance[end.getKey()];
+        return distance.get(end.getKey());
     }
 
     public Graph kruskal() {
@@ -119,6 +120,50 @@ public class Graph {
             if (distance == Integer.MAX_VALUE) {
                 tree.addEdge(tree.getVertex(edge.getA().getKey()), tree.getVertex(edge.getB().getKey()), edge.getWeight());
             }
+        }
+
+        return tree;
+    }
+
+
+
+    public Graph prim() {
+        Graph tree = new Graph();
+
+        ArrayList<Edge> edges = new ArrayList<>();
+
+        tree.addVertex(new Vertex(this.vertices.entrySet().iterator().next().getValue().getKey()));
+
+        while (tree.vertices.size() < this.vertices.size()) {
+            Edge edge = null;
+            int minWeight = Integer.MAX_VALUE;
+
+            for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
+                Vertex vertex = entry.getValue();
+                if (tree.getVertex(vertex.getKey()) != null) {
+                    for (Edge e : vertex.getEdges()) {
+                        if (e.getWeight() < minWeight && !edges.contains(e)) {
+                            if (tree.vertices.get(e.getA().getKey()) == null) {
+                                tree.addVertex(new Vertex(e.getA().getKey()));
+                            }
+
+                            if (tree.vertices.get(e.getB().getKey()) == null) {
+                                tree.addVertex(new Vertex(e.getB().getKey()));
+                            }
+
+                            int distance = tree.dijkstra(tree.getVertex(e.getA().getKey()), tree.getVertex(e.getB().getKey()));
+                            if (distance == Integer.MAX_VALUE) {
+                                edge = e;
+                                minWeight = e.getWeight();
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (edge == null) throw new RuntimeException();
+            tree.addEdge(tree.getVertex(edge.getA().getKey()), tree.getVertex(edge.getB().getKey()), edge.getWeight());
+            edges.add(edge);
         }
 
         return tree;

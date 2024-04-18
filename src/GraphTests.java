@@ -90,4 +90,43 @@ public class GraphTests {
 
         assert tree.dijkstra(tree.getVertex(5), tree.getVertex(6)) == 34;
     }
+
+    @Test
+    public void primTest() {
+        Graph graph = new Graph();
+
+        Vertex vA = new Vertex(0);
+        Vertex vB = new Vertex(1);
+        Vertex vC = new Vertex(2);
+        Vertex vD = new Vertex(3);
+        Vertex vE = new Vertex(4);
+        Vertex vF = new Vertex(5);
+        Vertex vG = new Vertex(6);
+
+        graph.addVertex(vA);
+        graph.addVertex(vB);
+        graph.addVertex(vC);
+        graph.addVertex(vD);
+        graph.addVertex(vE);
+        graph.addVertex(vF);
+        graph.addVertex(vG);
+
+        graph.addEdge(vA, vB, 7);
+        graph.addEdge(vA, vD, 5);
+        graph.addEdge(vB, vC, 8);
+        graph.addEdge(vB, vD, 9);
+        graph.addEdge(vB, vE, 7);
+        graph.addEdge(vC, vE, 5);
+        graph.addEdge(vD, vE, 15);
+        graph.addEdge(vD, vF, 6);
+        graph.addEdge(vE, vF, 8);
+        graph.addEdge(vE, vG, 9);
+        graph.addEdge(vF, vG, 11);
+
+        Graph tree = graph.prim();
+
+        tree.printGraph();
+
+        assert tree.dijkstra(tree.getVertex(5), tree.getVertex(6)) == 34;
+    }
 }
