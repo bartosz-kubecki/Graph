@@ -1,6 +1,4 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Graph {
     private HashMap<Integer, Vertex> vertices;
@@ -43,7 +41,6 @@ public class Graph {
     public int dijkstra(Vertex start, Vertex end) {
         HashSet<Vertex> settledVertices = new HashSet<>();
         HashSet<Edge> settledEdges = new HashSet<>();
-
 
         int[] distance = new int[vertices.size()];
         for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
@@ -91,6 +88,39 @@ public class Graph {
         }
 
         return distance[end.getKey()];
+    }
+
+    public Graph kruskal() {
+        Graph tree = new Graph();
+
+        ArrayList<Edge> edges = new ArrayList<>();
+
+        for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
+            Vertex vertex = entry.getValue();
+            edges.addAll(vertex.getEdges());
+
+            Vertex newVertex = new Vertex(vertex.getKey());
+            tree.addVertex(newVertex);
+        }
+
+        while (!edges.isEmpty()) {
+            Edge edge = null;
+            int minWeight = Integer.MAX_VALUE;
+            for (Edge e : edges) {
+                if (e.getWeight() < minWeight) {
+                    edge = e;
+                    minWeight = e.getWeight();
+                }
+            }
+            if (edge == null) throw new RuntimeException();
+            edges.remove(edge);
+
+
+            int distance = tree.dijkstra(edge.getA(), edge.getB());
+            System.out.println(distance);
+        }
+
+        return tree;
     }
 
     public void printGraph(){
