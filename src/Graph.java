@@ -54,7 +54,7 @@ public class Graph {
             int lowestDistance = Integer.MAX_VALUE;
             for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
                 Vertex vertex = entry.getValue();
-                if (distance[vertex.getKey()] < lowestDistance && !settledVertices.contains(vertex)) {
+                if (distance[vertex.getKey()] <= lowestDistance && !settledVertices.contains(vertex)) {
                     lowestVertex = vertex;
                     lowestDistance = distance[vertex.getKey()];
                 }
@@ -115,9 +115,10 @@ public class Graph {
             if (edge == null) throw new RuntimeException();
             edges.remove(edge);
 
-
-            int distance = tree.dijkstra(edge.getA(), edge.getB());
-            System.out.println(distance);
+            int distance = tree.dijkstra(tree.getVertex(edge.getA().getKey()), tree.getVertex(edge.getB().getKey()));
+            if (distance == Integer.MAX_VALUE) {
+                tree.addEdge(tree.getVertex(edge.getA().getKey()), tree.getVertex(edge.getB().getKey()), edge.getWeight());
+            }
         }
 
         return tree;
