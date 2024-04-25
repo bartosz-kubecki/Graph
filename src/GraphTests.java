@@ -138,4 +138,35 @@ public class GraphTests {
         assert tree1.dijkstra(tree1.getVertex(0), tree1.getVertex(4)) == 31;
         assert tree1.dijkstra(tree1.getVertex(7), tree1.getVertex(8)) == 9;
     }
+
+    @Test
+    public void chromaticTest() {
+        Graph graph = new Graph();
+
+        Vertex v0 = new Vertex(0);
+        Vertex v1 = new Vertex(1);
+        graph.addVertex(v0);
+        graph.addVertex(v1);
+        graph.addEdge(v0, v1, 1);
+        assert graph.chromaticNumber() == 2;
+
+        Vertex v2 = new Vertex(2);
+        graph.addVertex(v2);
+        graph.addEdge(v1, v2, 1);
+        graph.addEdge(v0, v2, 1);
+        assert graph.chromaticNumber() == 3;
+
+        Vertex v3 = new Vertex(3);
+        graph.addVertex(v3);
+        graph.addEdge(v2, v3, 1);
+        graph.addEdge(v3, v0, 1);
+        graph.removeEdge(v0, v2);
+        assert graph.chromaticNumber() == 2;
+
+        Vertex v4 = new Vertex(4);
+        graph.addVertex(v4);
+        graph.addEdge(v0, v4, 1);
+        graph.addEdge(v1, v4, 1);
+        assert graph.chromaticNumber() == 3;
+    }
 }

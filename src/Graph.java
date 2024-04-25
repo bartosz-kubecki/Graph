@@ -33,6 +33,14 @@ public class Graph {
         vertices.remove(vertex.getKey(), vertex);
     }
 
+    public void removeEdge(Vertex a, Vertex b) {
+        for (Edge edge : a.getEdges()) {
+            if (edge.getA() == a && edge.getB() == b || edge.getB() == a && edge.getA() == b) {
+                removeEdge(edge);
+            }
+        }
+    }
+
     public void removeEdge(Edge edge) {
         edge.getA().getEdges().remove(edge);
         edge.getB().getEdges().remove(edge);
@@ -167,6 +175,43 @@ public class Graph {
         }
 
         return tree;
+    }
+
+    public int chromaticNumber() {
+        int chromaticNumber = 0;
+
+        HashMap<Vertex, Integer> colors = new HashMap<>();
+
+        for (Map.Entry<Integer, Vertex> entry : this.vertices.entrySet()) {
+            Vertex vertex = entry.getValue();
+
+            HashSet<Integer> usedColors = new HashSet<>();
+
+            int color = 0;
+
+            for (Edge edge : vertex.getEdges()) {
+                if (edge.getA() == vertex) {
+                    if (colors.get(edge.getB()) != null) {
+                        usedColors.add(colors.get(edge.getB()));
+                    }
+                } else {
+                    if (colors.get(edge.getA()) != null) {
+                        usedColors.add(colors.get(edge.getA()));
+                    }
+                }
+            }
+
+            while (usedColors.contains(color)) {
+                color++;
+            }
+
+            if (chromaticNumber < color) chromaticNumber = color;
+
+            colors.put(vertex, color);
+
+        }
+
+        return chromaticNumber + 1;
     }
 
     public void printGraph(){
